@@ -21,9 +21,9 @@ const githubToken = args[1];
 
 async function main() {
   // Do not wait longer than 20 minutes for all jobs to finish.
-  // This loop goes 5 seconds at a time.
-  // 20 minutes * 60 seconds/min / 5 seconds per loop.
-  const iterations = 20 * 60 / 5
+  // This loop goes 10 seconds at a time.
+  // 30 minutes * 60 seconds/min / 10 seconds per loop.
+  const iterations = 30 * 60 / 10
   for (let i=0; i<iterations; i++) {
     const url = `https://api.github.com/repos/${repo}/actions/runs/${runId}/jobs`;
     const res = await request({
@@ -51,6 +51,8 @@ async function main() {
       for (const job of requiredJobs) {
         if (successfulJobs.includes(job)) {
           completedCount++;
+        } else {
+          console.info(`${job} still not complete`);
         }
       }
       console.log(`${completedCount} of ${requiredJobs.length} required jobs complete.`);
@@ -58,7 +60,7 @@ async function main() {
         return;
       }
     }
-    await new Promise(r => setTimeout(r, 5000));
+    await new Promise(r => setTimeout(r, 10000));
   }
 }
 main().catch(err => {
